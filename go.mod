@@ -1,4 +1,4 @@
-module main
+module ftp-flows
 
 go 1.14
 
