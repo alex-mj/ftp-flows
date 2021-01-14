@@ -103,6 +103,7 @@ func (flow *flow) getFileListFromSource(fileMask string) []string {
 			Log.Error(err.Error())
 		}
 		for _, fileName := range localFiles {
+
 			fileList = append(fileList, fileName)
 		}
 	}
@@ -118,7 +119,7 @@ func (flow *flow) getFilesFromSorces() {
 			file.FileName = fileName
 			_, file.OnlyFileName = filepath.Split(fileName)
 			var err error
-			file.TempName, err = flow.copyToTemp(fileName)
+			file.TempName, err = flow.copyToTemp(file.OnlyFileName)
 			if err == nil {
 				flow.Files[file] = true
 			}
@@ -146,6 +147,7 @@ func (flow *flow) copyToTemp(fileName string) (string, error) {
 		fileReader = localFile
 	} else {
 		localFile, err := os.Open(flow.Source.LocalDir + fileName)
+		//localFile, err := os.Open(fileName)
 		defer localFile.Close()
 		if err != nil {
 			Log.Error(err.Error())
@@ -203,14 +205,14 @@ func (flow *flow) copyFileTo(dest *flowDir, fileSrc fileFromSource) bool {
 	file, err := os.Open(fileSrc.TempName)
 	defer file.Close()
 	if err != nil {
-		Log.Error(err.Error())
+		Log.Error("#208" + err.Error())
 		return false
 	}
 	if dest.LocalDir == "" {
 		destFtpName := dest.FtpSettings.FtpDir + fileSrc.OnlyFileName
 		err = dest.FtpClient.Stor(destFtpName, file)
 		if err != nil {
-			Log.Error(err.Error())
+			Log.Error("#215" + err.Error())
 			return false
 		}
 		Log.Info(fileSrc.TempName + " ---> " + destFtpName)
