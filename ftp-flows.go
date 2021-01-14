@@ -52,7 +52,7 @@ func main() {
 		flow.deleteFilesfromSource()
 		flow.closeFTPConnects()
 	}
-
+	Log.End()
 }
 
 type settings struct {
