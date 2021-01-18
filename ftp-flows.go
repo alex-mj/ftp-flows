@@ -187,21 +187,21 @@ func (flow *flow) copyFileTo(dest *flowDir, fileSrc fileFromSource) bool {
 
 	// TODO расписать все варианты что откуда может копироваться
 	// (файлы из источника уже в flow.Files.TempName, получателей может быть много)
-
-	if dest.FtpClient == nil {
-		fmt.Println("	* Подключиться к FTP " + dest.FtpSettings.Server + " * ")
-		var err error
-		dest.FtpClient, err = ftp.Dial(dest.FtpSettings.Server)
-		if err != nil {
-			Log.Error("(#94) Не могу подключиться к FTP, [server:" + dest.FtpSettings.Server + "] " + err.Error())
-			return false
+	/*
+		if dest.FtpClient == nil {
+			fmt.Println("	* Подключиться к FTP " + dest.FtpSettings.Server + " * ")
+			var err error
+			dest.FtpClient, err = ftp.Dial(dest.FtpSettings.Server)
+			if err != nil {
+				Log.Error("(#196) Не могу подключиться к FTP, [server:" + dest.FtpSettings.Server + "] " + err.Error())
+				return false
+			}
+			if err := dest.FtpClient.Login(dest.FtpSettings.Login, dest.FtpSettings.Password); err != nil {
+				Log.Error("(#200) Не могу подключиться к FTP, [server:" + dest.FtpSettings.Server + "] " + err.Error())
+				return false
+			}
 		}
-		if err := dest.FtpClient.Login(dest.FtpSettings.Login, dest.FtpSettings.Password); err != nil {
-			Log.Error("(#94) Не могу подключиться к FTP, [server:" + dest.FtpSettings.Server + "] " + err.Error())
-			return false
-		}
-	}
-
+	*/
 	file, err := os.Open(fileSrc.TempName)
 	defer file.Close()
 	if err != nil {
