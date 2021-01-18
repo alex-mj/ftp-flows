@@ -35,23 +35,21 @@ var Settings settings
 func main() {
 
 	Settings = settings{}
-	/////////////////	init log ///////////////////////////////////////////
+	/////////////////	init log //////////////////////////////////
 	Settings.ServiceName = "ftp-flows"
 	Log.Start(Settings.ServiceName)
 
-	///////////////   get settings	//////////////////////////////////////
+	///////////////   get settings ////////////////////////////////
 	Settings.getFromXMLfile()
 	///////////////   MAIN 	 //////////////////////////////////////
 	for _, flow := range Settings.Flows {
-
-		fmt.Println(flow)
-
 		flow.openFTPConnects()
 		flow.getFilesFromSorces()
 		flow.copyFilesToDestinayions()
 		flow.deleteFilesfromSource()
 		flow.closeFTPConnects()
 	}
+	///////////////   finish, ok	////////////////////////////////
 	Log.End()
 }
 
@@ -178,30 +176,16 @@ func (flow *flow) copyToTemp(fileName string) (string, error) {
 func (flow *flow) copyFilesToDestinayions() {
 	for file, succes := range flow.Files {
 		for _, dest := range flow.Destinations {
-			flow.Files[file] = succes && flow.copyFileTo(&dest, file)
+			flow.Files[file] = succes && dest.putFile(file)
 		}
 	}
 }
 
-func (flow *flow) copyFileTo(dest *flowDir, fileSrc fileFromSource) bool {
+func (dest *flowDir) putFile(fileSrc fileFromSource) bool {
 
 	// TODO расписать все варианты что откуда может копироваться
 	// (файлы из источника уже в flow.Files.TempName, получателей может быть много)
-	/*
-		if dest.FtpClient == nil {
-			fmt.Println("	* Подключиться к FTP " + dest.FtpSettings.Server + " * ")
-			var err error
-			dest.FtpClient, err = ftp.Dial(dest.FtpSettings.Server)
-			if err != nil {
-				Log.Error("(#196) Не могу подключиться к FTP, [server:" + dest.FtpSettings.Server + "] " + err.Error())
-				return false
-			}
-			if err := dest.FtpClient.Login(dest.FtpSettings.Login, dest.FtpSettings.Password); err != nil {
-				Log.Error("(#200) Не могу подключиться к FTP, [server:" + dest.FtpSettings.Server + "] " + err.Error())
-				return false
-			}
-		}
-	*/
+
 	file, err := os.Open(fileSrc.TempName)
 	defer file.Close()
 	if err != nil {
@@ -210,11 +194,6 @@ func (flow *flow) copyFileTo(dest *flowDir, fileSrc fileFromSource) bool {
 	}
 	if dest.LocalDir == "" {
 		destFtpName := dest.FtpSettings.FtpDir + fileSrc.OnlyFileName
-		fmt.Println(">>>>>>>")
-		fmt.Println(file)
-		fmt.Println(destFtpName)
-		fmt.Println(dest.FtpClient)
-
 		err = dest.FtpClient.Stor(destFtpName, file)
 		if err != nil {
 			Log.Error("#215" + err.Error())
@@ -314,7 +293,7 @@ func (flow *flow) closeFTPConnects() {
 //	ftpSettings.connect()  !PANIC
 func (ftpSettings *ftpSettings) connect() *ftp.ServerConn {
 
-	fmt.Println("	* Подключиться к FTP " + ftpSettings.Server + " * ")
+	//fmt.Println("	* Подключиться к FTP " + ftpSettings.Server + " * ")
 	FTPClient, err := ftp.Dial(ftpSettings.Server)
 	if err != nil {
 		Log.Error("(#123) Не могу подключиться к FTP, [server:" + ftpSettings.Server + "] " + err.Error())
@@ -392,7 +371,7 @@ func deleteFile(src string) error {
 	if err != nil {
 		if os.IsNotExist(err) {
 			//log.WithFields(logrus.Fields{"src": src, "dst": dst, "err": err}).Warn("Файл перемещён, но удалить его не получилось: удалён кем-то ещё.")
-			fmt.Println("Файл перемещён, но удалить его не получилось: удалён кем-то ещё.")
+			Log.Info("Файл перемещён, но удалить его не получилось: удалён кем-то ещё.")
 			return nil
 		}
 		return fmt.Errorf("Файл перемещён. Но удалить его не получилось. %v", err)
