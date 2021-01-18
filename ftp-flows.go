@@ -210,9 +210,11 @@ func (flow *flow) copyFileTo(dest *flowDir, fileSrc fileFromSource) bool {
 	}
 	if dest.LocalDir == "" {
 		destFtpName := dest.FtpSettings.FtpDir + fileSrc.OnlyFileName
+		fmt.Println(">>>>>>>")
 		fmt.Println(destFtpName)
 		fmt.Println(destFtpName)
 		fmt.Println(dest.FtpClient)
+
 		err = dest.FtpClient.Stor(destFtpName, file)
 		if err != nil {
 			Log.Error("#215" + err.Error())
