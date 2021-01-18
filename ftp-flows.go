@@ -123,8 +123,6 @@ func (flow *flow) getFilesFromSorces() {
 			}
 		}
 	}
-	// debug:
-	fmt.Println(flow.Files)
 }
 
 //func (flow *flow) копироватьФайлИзСоурсаВТемпДиректорию()  {
@@ -293,7 +291,6 @@ func (flow *flow) closeFTPConnects() {
 //	ftpSettings.connect()  !PANIC
 func (ftpSettings *ftpSettings) connect() *ftp.ServerConn {
 
-	//fmt.Println("	* Подключиться к FTP " + ftpSettings.Server + " * ")
 	FTPClient, err := ftp.Dial(ftpSettings.Server)
 	if err != nil {
 		Log.Error("(#123) Не могу подключиться к FTP, [server:" + ftpSettings.Server + "] " + err.Error())
