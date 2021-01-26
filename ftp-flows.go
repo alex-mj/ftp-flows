@@ -194,7 +194,7 @@ func (dest *flowDir) putFile(fileSrc fileFromSource) bool {
 		destFtpName := dest.FtpSettings.FtpDir + fileSrc.OnlyFileName
 		err = dest.FtpClient.Stor(destFtpName, file)
 		if err != nil {
-			Log.Error("#215" + err.Error())
+			Log.Error("ERROR #215 to " + destFtpName + ", " + err.Error())
 			return false
 		}
 		Log.Info(fileSrc.TempName + " ---> " + destFtpName)
