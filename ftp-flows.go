@@ -172,9 +172,9 @@ func (flow *flow) copyToTemp(fileName string) (string, error) {
 
 //
 func (flow *flow) copyFilesToDestinayions() {
-	for file, succes := range flow.Files {
+	for file := range flow.Files {
 		for _, dest := range flow.Destinations {
-			flow.Files[file] = succes && dest.putFile(file)
+			flow.Files[file] = flow.Files[file] && dest.putFile(file)
 		}
 	}
 }
