@@ -194,13 +194,17 @@ func (dest *flowDir) putFile(fileSrc fileFromSource) bool {
 		destFtpName := dest.FtpSettings.FtpDir + fileSrc.OnlyFileName
 		err = dest.FtpClient.Stor(destFtpName, file)
 		if err != nil {
-			Log.Error("ERROR #215 to " + destFtpName + ", " + err.Error())
+			Log.Error("ERROR #197 to " + destFtpName + ", " + err.Error())
 			return false
 		}
 		Log.Info(fileSrc.TempName + " ---> " + destFtpName)
 	} else {
 		destLocalName := dest.LocalDir + fileSrc.OnlyFileName
-		copyFile(fileSrc.TempName, destLocalName)
+		err = copyFile(fileSrc.TempName, destLocalName)
+		if err != nil {
+			Log.Error("ERROR #205 to " + destLocalName + ", " + err.Error())
+			return false
+		}
 		//Log.Info(fileSrc.TempName + " ---> " + destLocalName)
 	}
 
@@ -380,6 +384,7 @@ func deleteFile(src string) error {
 //копируем файл
 func copyFile(src string, dst string) (err error) {
 
+	err = nil
 	sourcefile, err := os.Open(src)
 	if err != nil {
 		Log.Error("Не могу открыть файл:" + src + "\n" + err.Error())
@@ -389,7 +394,7 @@ func copyFile(src string, dst string) (err error) {
 
 	destfile, err := os.Create(dst)
 	if err != nil {
-		Log.Error("Не могу создать файл:" + dst + "\n" + err.Error())
+		Log.Error("Не могу создать файл: " + dst + "\n" + err.Error())
 		return err
 	}
 	//копируем содержимое и проверяем коды ошибок
